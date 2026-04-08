@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFBF5;
+  --foreground: #3D2E1F;
+  --cream: #FFFBF5;
+  --cream-dark: #FFF3E4;
+  --peach: #FFE8D6;
+  --coral: #FF8C6B;
+  --coral-light: #FFAB91;
+  --orange: #FF7043;
+  --green: #81C784;
+  --green-light: #C8E6C9;
+  --brown: #5D4037;
+  --brown-light: #8D6E63;
+  --gold: #FFB74D;
 }
 
 @theme inline {
@@ -12,15 +23,76 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: var(--cream);
+  color: var(--foreground);
+  font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 紙のようなテクスチャ背景 */
+.bg-paper {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(255, 140, 107, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(255, 183, 77, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(129, 199, 132, 0.06) 0%, transparent 50%);
+}
+
+/* スクロールバー */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D7CCC8;
+  border-radius: 3px;
+}
+
+/* セレクトボックス */
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238D6E63' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+}
+
+/* ふんわりフェードイン */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* ゆらゆら */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 星キラキラ */
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
 }
