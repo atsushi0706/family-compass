@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import FamilyMemberForm from '@/components/FamilyMemberForm';
+import FamilyMemberForm, { getDisplayName } from '@/components/FamilyMemberForm';
 import FamilyDiagram from '@/components/FamilyDiagram';
 import DiagnosisResultView from '@/components/DiagnosisResult';
 import AgeGuideView from '@/components/AgeGuideView';
@@ -31,16 +31,18 @@ function getCompatibility(a: FamilyMember, b: FamilyMember): CompatibilityAdvice
   return COMPATIBILITY_MATRIX[a.sanmeigaku.mainStar as MainStar]?.[b.sanmeigaku.mainStar as MainStar] ?? null;
 }
 
-// 関係ラベルを生成
+// 関係ラベルを生成（名前があれば名前を使う）
 function getRelationLabel(a: FamilyMember, b: FamilyMember): string {
-  return `${a.roleLabel} → ${b.roleLabel}`;
+  const nameA = a.givenName ? `${a.roleLabel}（${a.givenName}）` : a.roleLabel;
+  const nameB = b.givenName ? `${b.roleLabel}（${b.givenName}）` : b.roleLabel;
+  return `${nameA} → ${nameB}`;
 }
 
 export default function Home() {
   const [step, setStep] = useState<AppStep>('input');
   const [members, setMembers] = useState<FamilyMember[]>([
     createMember('parent', 'ママ'),
-    createMember('child', 'お子さん'),
+    createMember('child', '長女'),
   ]);
   const [selectedConcerns, setSelectedConcerns] = useState<string[]>([]);
   const [diagnosedMembers, setDiagnosedMembers] = useState<FamilyMember[]>([]);
@@ -334,7 +336,7 @@ export default function Home() {
                           background: selectedChildForAge === i ? '#81C784' : '#E8F5E9',
                           color: selectedChildForAge === i ? 'white' : '#2E7D32',
                         }}>
-                        {c.roleLabel}
+                        {getDisplayName(c)}
                       </button>
                     ))}
                   </div>
@@ -359,7 +361,7 @@ export default function Home() {
                           background: selectedChildForAge === i ? '#81C784' : '#E8F5E9',
                           color: selectedChildForAge === i ? 'white' : '#2E7D32',
                         }}>
-                        {c.roleLabel}
+                        {getDisplayName(c)}
                       </button>
                     ))}
                   </div>
