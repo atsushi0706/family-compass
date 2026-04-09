@@ -45,7 +45,15 @@ export default function DiagnosisResult({ parent, child, compatibility, concernH
       <div className="rounded-2xl p-5" style={{ background: 'white', border: '1.5px solid #FFE0B2', boxShadow: '0 2px 12px rgba(255,112,67,0.06)' }}>
         <h3 className="font-extrabold text-base mb-2" style={{ color: '#3E2723' }}>{child.roleLabel}の個性</h3>
         <p className="text-sm leading-relaxed mb-4" style={{ color: '#5D4037' }}>{childStar.starInfo.childDescription}</p>
-        <div className="grid grid-cols-2 gap-3">
+
+        {/* 詳細プロファイル */}
+        {'detailedProfile' in childStar.starInfo && (
+          <p className="text-sm leading-relaxed mb-4" style={{ color: '#5D4037' }}>
+            {(childStar.starInfo as Record<string, unknown>).detailedProfile as string}
+          </p>
+        )}
+
+        <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="rounded-xl p-3" style={{ background: '#E8F5E9' }}>
             <p className="text-xs font-bold mb-1.5" style={{ color: '#2E7D32' }}>得意なこと</p>
             <ul className="text-xs space-y-1" style={{ color: '#4E6B45' }}>
@@ -59,6 +67,58 @@ export default function DiagnosisResult({ parent, child, compatibility, concernH
             </ul>
           </div>
         </div>
+
+        {/* 隠れた才能・やる気スイッチ・伸びる環境 */}
+        {('hiddenTalent' in childStar.starInfo) && (
+          <div className="space-y-2">
+            <div className="rounded-xl p-3" style={{ background: '#F3E5F5' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#7B1FA2' }}>隠れた才能</p>
+              <p className="text-sm" style={{ color: '#4A148C' }}>{(childStar.starInfo as Record<string, unknown>).hiddenTalent as string}</p>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: '#E3F2FD' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#1565C0' }}>やる気スイッチの入れ方</p>
+              <p className="text-sm" style={{ color: '#0D47A1' }}>{(childStar.starInfo as Record<string, unknown>).motivationKey as string}</p>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: '#E8F5E9' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#2E7D32' }}>伸びる環境</p>
+              <p className="text-sm" style={{ color: '#1B5E20' }}>{(childStar.starInfo as Record<string, unknown>).idealEnvironment as string}</p>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: '#FFF8E1' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#F57F17' }}>ストレスのサイン</p>
+              <p className="text-sm" style={{ color: '#E65100' }}>{(childStar.starInfo as Record<string, unknown>).stressSign as string}</p>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: '#FCE4EC' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#C62828' }}>将来の可能性</p>
+              <p className="text-sm" style={{ color: '#880E4F' }}>{(childStar.starInfo as Record<string, unknown>).futureVision as string}</p>
+            </div>
+          </div>
+        )}
+
+        {/* 声かけフレーズ・NGワード */}
+        {('communicationTips' in childStar.starInfo) && (
+          <div className="grid grid-cols-1 gap-2 mt-4">
+            <div className="rounded-xl p-3" style={{ background: '#E8F5E9' }}>
+              <p className="text-xs font-bold mb-2" style={{ color: '#2E7D32' }}>使ってほしい声かけフレーズ</p>
+              <ul className="space-y-1">
+                {((childStar.starInfo as Record<string, unknown>).communicationTips as string[]).map((tip, i) => (
+                  <li key={i} className="text-sm flex gap-1.5" style={{ color: '#1B5E20' }}>
+                    <span>✓</span>「{tip}」
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: '#FFEBEE' }}>
+              <p className="text-xs font-bold mb-2" style={{ color: '#C62828' }}>避けてほしいNGワード</p>
+              <ul className="space-y-1">
+                {((childStar.starInfo as Record<string, unknown>).ngWords as string[]).map((w, i) => (
+                  <li key={i} className="text-sm flex gap-1.5" style={{ color: '#B71C1C' }}>
+                    <span>✗</span>「{w}」
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 姓名判断 */}

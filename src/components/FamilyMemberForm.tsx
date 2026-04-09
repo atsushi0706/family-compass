@@ -16,9 +16,10 @@ export default function FamilyMemberForm({ member, onChange, onRemove, canRemove
     onChange({ ...member, ...patch });
   };
 
-  const isParent = member.role === 'parent1' || member.role === 'parent2';
-  const accentColor = isParent ? '#FF7043' : '#4CAF50';
-  const lightColor = isParent ? '#FFF3E4' : '#E8F5E9';
+  const isParent = member.role === 'parent';
+  const isGrandparent = member.role === 'grandparent';
+  const accentColor = isGrandparent ? '#7E57C2' : (isParent ? '#FF7043' : '#4CAF50');
+  const lightColor = isGrandparent ? '#EDE7F6' : (isParent ? '#FFF3E4' : '#E8F5E9');
 
   return (
     <div className="rounded-2xl p-5 relative transition-all hover:shadow-md"

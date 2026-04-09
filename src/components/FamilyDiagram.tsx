@@ -15,15 +15,23 @@ function getDisplayChar(member: FamilyMember): string {
 }
 
 export default function FamilyDiagram({ members, selectedPairIds }: Props) {
-  const parents = members.filter((m) => m.role === 'parent1' || m.role === 'parent2');
+  const parents = members.filter((m) => m.role === 'parent');
   const children = members.filter((m) => m.role === 'child');
+  const grandparents = members.filter((m) => m.role === 'grandparent');
 
   const svgW = 400;
-  const svgH = parents.length <= 1 && children.length <= 1 ? 220 : 280;
+  const hasGP = grandparents.length > 0;
+  const svgH = hasGP ? 340 : (parents.length <= 1 && children.length <= 1 ? 220 : 280);
   const centerX = svgW / 2;
 
+  // 祖父母の位置
+  const gpY = 40;
+  const gpSpacing = Math.min(90, (svgW - 80) / Math.max(grandparents.length, 1));
+  const gpStartX = centerX - ((grandparents.length - 1) * gpSpacing) / 2;
+  const gpPositions = grandparents.map((_, i) => ({ x: gpStartX + i * gpSpacing, y: gpY }));
+
   // 親が1人の場合は中央に、2人の場合は左右に
-  const parentY = 55;
+  const parentY = hasGP ? 130 : 55;
   const parentSpacing = 130;
   const parentPositions = parents.length === 1
     ? [{ x: centerX, y: parentY }]
@@ -32,7 +40,7 @@ export default function FamilyDiagram({ members, selectedPairIds }: Props) {
         y: parentY,
       }));
 
-  const childY = parents.length === 0 ? 55 : (parents.length === 1 && children.length === 1 ? 180 : 210);
+  const childY = parents.length === 0 ? 55 : (hasGP ? 260 : (parents.length === 1 && children.length === 1 ? 180 : 210));
   const childSpacing = Math.min(100, (svgW - 80) / Math.max(children.length, 1));
   const childStartX = centerX - ((children.length - 1) * childSpacing) / 2;
   const childPositions = children.map((_, i) => ({
@@ -115,6 +123,45 @@ export default function FamilyDiagram({ members, selectedPairIds }: Props) {
             </g>
           );
         })}
+
+        {/* 祖父母ノード */}
+        {grandparents.map((gp, i) => {
+          const pos = gpPositions[i];
+          if (!pos) return null;
+          const sel = isSelected(gp.id);
+          const char = getDisplayChar(gp);
+          return (
+            <g key={gp.id} filter="url(#nodeShadow)">
+              <circle cx={pos.x} cy={pos.y} r={20}
+                fill={sel ? '#9575CD' : '#EDE7F6'}
+                stroke={sel ? '#7E57C2' : '#B39DDB'}
+                strokeWidth={sel ? 3 : 2}
+              />
+              <text x={pos.x} y={pos.y + 1} textAnchor="middle" dominantBaseline="middle"
+                fontSize="13" fontWeight="bold" fill={sel ? 'white' : '#4527A0'}>
+                {char}
+              </text>
+              <text x={pos.x} y={pos.y + 32} textAnchor="middle" fontSize="10"
+                fill={sel ? '#4527A0' : '#5D4037'} fontWeight={sel ? 'bold' : 'normal'}>
+                {gp.roleLabel}
+              </text>
+              {gp.sanmeigaku && (
+                <text x={pos.x} y={pos.y + 44} textAnchor="middle" fontSize="8" fill="#7E57C2">
+                  {gp.sanmeigaku.mainStar}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        {/* 祖父母→親の接続線 */}
+        {gpPositions.map((gp, gi) =>
+          parentPositions.map((pp, pi) => (
+            <line key={`gp${gi}-p${pi}`}
+              x1={gp.x} y1={gp.y + 20} x2={pp.x} y2={pp.y - 26}
+              stroke="#D1C4E9" strokeWidth="1.5" strokeDasharray="4 3" />
+          ))
+        )}
 
         {/* 子ノード */}
         {children.map((child, i) => {
